@@ -1,5 +1,7 @@
 # fb-scraper
 
+[![Social Preview](https://fb.xcasper.space/og.png)](https://fb.xcasper.space)
+
 > **Internal Facebook video scraper service — multi-provider, no API key required.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-purple.svg)](LICENSE)
@@ -9,6 +11,8 @@
 [![Node](https://img.shields.io/badge/Node.js-22.x-green)](https://nodejs.org)
 
 **Live:** [https://fb.xcasper.space](https://fb.xcasper.space)
+
+**Share:** [Facebook](https://www.facebook.com/sharer/sharer.php?u=https://fb.xcasper.space) · [Twitter/X](https://twitter.com/intent/tweet?text=Free+Facebook+Video+Downloader+API+by+CASPER+TECH&url=https://fb.xcasper.space) · [WhatsApp](https://wa.me/?text=Check+out+fb-scraper+by+CASPER+TECH:+https://fb.xcasper.space)
 
 **Part of:** [CASPER TECH API Hub](https://apis.xcasper.space) — 260+ free API endpoints
 
@@ -94,6 +98,69 @@ apt-get install -y chromium-browser
 # or
 apt-get install -y chromium
 ```
+
+### Deploy on Render
+
+1. Go to [render.com](https://render.com) → **New Web Service**
+2. Connect GitHub → select `Casper-Tech-ke/fb-scraper`
+3. Configure:
+
+| Setting | Value |
+|---------|-------|
+| Environment | Node |
+| Build Command | `npm install puppeteer-core node-fetch` |
+| Start Command | `node server.js` |
+| Port | `5757` |
+
+> **Puppeteer note:** Render free tier does not ship Chromium by default. Add the [Puppeteer buildpack](https://render.com/docs/render-buildpacks) in Settings → Buildpacks. Without it, only `/scrape-snap` (no browser) will work.
+
+```bash
+# Environment variable (Render dashboard)
+CHROMIUM_PATH=/usr/bin/google-chrome-stable
+```
+
+### Deploy on Koyeb
+
+1. Go to [koyeb.com](https://koyeb.com) → **Create App**
+2. Select **GitHub** → `Casper-Tech-ke/fb-scraper`
+3. Configure:
+
+| Setting | Value |
+|---------|-------|
+| Run Command | `node server.js` |
+| Port | `5757` |
+| Plan | Nano (free) — snap endpoint only / Micro for full Puppeteer |
+
+> **Docker deploy (recommended for Puppeteer):** Use a `Dockerfile` that installs Chromium. Example:
+
+```dockerfile
+FROM node:20-slim
+RUN apt-get update && apt-get install -y chromium --no-install-recommends
+WORKDIR /app
+COPY . .
+RUN npm install puppeteer-core node-fetch
+ENV CHROMIUM_PATH=/usr/bin/chromium
+EXPOSE 5757
+CMD ["node", "server.js"]
+```
+
+### Deploy on Replit
+
+1. Go to [replit.com](https://replit.com) → **Create Repl**
+2. Select **Import from GitHub** → paste `https://github.com/Casper-Tech-ke/fb-scraper`
+3. In the Shell tab:
+
+```bash
+npm install puppeteer-core node-fetch
+```
+
+4. Create or update `.replit`:
+
+```toml
+run = "node server.js"
+```
+
+> **⚠️ Important:** Chromium/Puppeteer is **NOT available** on Replit free tier. Only `/scrape-snap` (snapsave.app vm-decode — no browser) will work. To use `/scrape` and `/scrape-sf`, upgrade to **Replit Core**.
 
 ---
 
@@ -220,10 +287,15 @@ Puppeteer path: `/tmp/iss-capture/node_modules/puppeteer-core`
 
 ```
 fb-scraper/
-├── server.js         - Main HTTP server (all scraping logic)
-├── server.js.bak     - Backup of base server before snap function was added
+├── server.js              - Main HTTP server (all scraping logic + static file serving)
+├── server.js.bak          - Backup of base server before snap function was added
 ├── public/
-│   └── index.html    - Interactive documentation frontend
+│   ├── index.html         - Interactive documentation frontend
+│   ├── terms.html         - Terms of Service
+│   ├── privacy.html       - Privacy Policy
+│   ├── disclaimer.html    - Disclaimer page
+│   ├── favicon.svg        - SVG favicon
+│   └── og.png             - Social preview image (1200×630)
 ├── CONTRIBUTING.md
 ├── DISCLAIMER.md
 ├── LICENSE
@@ -249,9 +321,12 @@ This service powers the following public endpoints on [apis.xcasper.space](https
 
 Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) before submitting a pull request.
 
-## Disclaimer
+## Legal
 
-This is an independent open-source project not affiliated with or endorsed by Facebook/Meta. Read the full [DISCLAIMER.md](DISCLAIMER.md).
+- [Disclaimer](https://fb.xcasper.space/disclaimer.html) — not affiliated with Facebook/Meta
+- [Terms of Service](https://fb.xcasper.space/terms.html) — usage rules and restrictions  
+- [Privacy Policy](https://fb.xcasper.space/privacy.html) — no personal data stored
+- [DISCLAIMER.md](DISCLAIMER.md) — GitHub markdown version
 
 ## License
 
