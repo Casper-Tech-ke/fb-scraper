@@ -1,0 +1,54 @@
+{
+  "name": "fb-scraper",
+  "version": "1.0.0",
+  "description": "Internal Facebook video scraper service — multi-provider (fdown.net, savefrom.net, snapsave.app). Powers the fb1–fb4 downloader endpoints on apis.xcasper.space.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "pm2:start": "pm2 start ecosystem.config.js",
+    "pm2:stop": "pm2 stop fb-scraper",
+    "pm2:restart": "pm2 restart fb-scraper",
+    "pm2:reload": "pm2 reload fb-scraper",
+    "pm2:delete": "pm2 delete fb-scraper",
+    "pm2:logs": "pm2 logs fb-scraper",
+    "pm2:status": "pm2 status",
+    "pm2:save": "pm2 save",
+    "pm2:startup": "pm2 startup && pm2 save"
+  },
+  "keywords": [
+    "facebook",
+    "downloader",
+    "scraper",
+    "video",
+    "api",
+    "casper-tech",
+    "fb-scraper",
+    "snapsave",
+    "fdown",
+    "savefrom",
+    "kenya"
+  ],
+  "author": "TRABY CASPER <casper@xcasper.space> (https://xcasper.space)",
+  "license": "MIT",
+  "homepage": "https://fb.xcasper.space",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Casper-Tech-ke/fb-scraper.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Casper-Tech-ke/fb-scraper/issues"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "puppeteer-core": "^24.0.0"
+  },
+  "optionalDependencies": {
+    "node-fetch": "^3.3.2"
+  },
+  "devDependencies": {
+    "pm2": "^6.0.0"
+  }
+}
