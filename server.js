@@ -326,14 +326,14 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (parsed.pathname === '/health') {
-    res.end(JSON.stringify({ ok: true, port: PORT, endpoints: ['/scrape', '/scrape-sf', '/scrape-snap'] }));
+    res.end(JSON.stringify({ ok: true, port: PORT, endpoints: ['/scrape', '/scrape-sf', '/scrape-snap'] }, null, 2));
     return;
   }
 
   const fbUrl = parsed.query.url;
   if (!fbUrl) {
     res.statusCode = 400;
-    res.end(JSON.stringify({ error: 'Missing url parameter' }));
+    res.end(JSON.stringify({ error: 'Missing url parameter' }, null, 2));
     return;
   }
 
@@ -342,11 +342,11 @@ const server = http.createServer(async (req, res) => {
     try {
       const result = await scrapeFdown(fbUrl);
       console.log(`[fb-scraper/fdown] Got ${result.links.length} links`);
-      res.end(JSON.stringify(result));
+      res.end(JSON.stringify(result, null, 2));
     } catch (err) {
       console.error('[fb-scraper/fdown] Error:', err.message);
       res.statusCode = 500;
-      res.end(JSON.stringify({ error: err.message }));
+      res.end(JSON.stringify({ error: err.message }, null, 2));
     }
     return;
   }
@@ -356,11 +356,11 @@ const server = http.createServer(async (req, res) => {
     try {
       const result = await scrapeSavefrom(fbUrl);
       console.log(`[fb-scraper/savefrom] Got ${result.links.length} links`);
-      res.end(JSON.stringify(result));
+      res.end(JSON.stringify(result, null, 2));
     } catch (err) {
       console.error('[fb-scraper/savefrom] Error:', err.message);
       res.statusCode = 500;
-      res.end(JSON.stringify({ error: err.message }));
+      res.end(JSON.stringify({ error: err.message }, null, 2));
     }
     return;
   }
@@ -370,17 +370,17 @@ const server = http.createServer(async (req, res) => {
     try {
       const result = await scrapeSnapsave(fbUrl);
       console.log(`[fb-scraper/snapsave] Got ${result.links.length} links`);
-      res.end(JSON.stringify(result));
+      res.end(JSON.stringify(result, null, 2));
     } catch (err) {
       console.error('[fb-scraper/snapsave] Error:', err.message);
       res.statusCode = 500;
-      res.end(JSON.stringify({ error: err.message }));
+      res.end(JSON.stringify({ error: err.message }, null, 2));
     }
     return;
   }
 
   res.statusCode = 404;
-  res.end(JSON.stringify({ error: 'Not found. Use /scrape?url=FB_URL or /scrape-sf?url=FB_URL' }));
+  res.end(JSON.stringify({ error: 'Not found. Use /scrape?url=FB_URL or /scrape-sf?url=FB_URL' }, null, 2));
 });
 
 server.listen(PORT, '127.0.0.1', () => {
