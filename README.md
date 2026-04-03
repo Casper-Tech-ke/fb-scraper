@@ -3,10 +3,12 @@
 > **Internal Facebook video scraper service — multi-provider, no API key required.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-purple.svg)](LICENSE)
-[![Status](https://img.shields.io/badge/Status-Live-brightgreen)](https://apis.xcasper.space)
+[![Status](https://img.shields.io/badge/Status-Live-brightgreen)](https://fb.xcasper.space)
 [![Built by](https://img.shields.io/badge/Built%20by-TRABY%20CASPER-7c3aed)](https://xcasper.space)
 [![CASPER TECH](https://img.shields.io/badge/CASPER%20TECH-Open%20API-a855f7)](https://xcasper.space)
 [![Node](https://img.shields.io/badge/Node.js-22.x-green)](https://nodejs.org)
+
+**Live:** [https://fb.xcasper.space](https://fb.xcasper.space)
 
 **Part of:** [CASPER TECH API Hub](https://apis.xcasper.space) — 260+ free API endpoints
 
