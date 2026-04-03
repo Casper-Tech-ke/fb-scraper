@@ -299,6 +299,20 @@ const server = http.createServer(async (req, res) => {
   res.setHeader('Content-Type', 'application/json');
   res.setHeader('Access-Control-Allow-Origin', '*');
 
+  if (parsed.pathname === '/' && req.method === 'GET') {
+    const fs = require('fs');
+    const path = require('path');
+    const htmlPath = path.join(__dirname, 'public', 'index.html');
+    try {
+      const html = fs.readFileSync(htmlPath, 'utf8');
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      res.end(html);
+    } catch(e) {
+      res.end('<h1>fb-scraper — CASPER TECH</h1><p>Service running on port 5757</p>');
+    }
+    return;
+  }
+
   if (parsed.pathname === '/health') {
     res.end(JSON.stringify({ ok: true, port: PORT, endpoints: ['/scrape', '/scrape-sf', '/scrape-snap'] }));
     return;
