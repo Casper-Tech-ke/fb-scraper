@@ -214,14 +214,14 @@
   <!-- Internal Endpoints -->
   <section id="endpoints">
     <div class="section-title"><span>🔌</span> Internal Endpoints</div>
-    <p style="color:var(--muted);font-size:0.85rem;margin-bottom:20px;">The service runs at <code style="background:var(--surface2);padding:2px 8px;border-radius:4px;font-size:0.82rem;">127.0.0.1:5757</code>. All endpoints accept <code style="background:var(--surface2);padding:2px 8px;border-radius:4px;font-size:0.82rem;">?url=FACEBOOK_URL</code>.</p>
+    <p style="color:var(--muted);font-size:0.85rem;margin-bottom:20px;">The service runs at <code style="background:var(--surface2);padding:2px 8px;border-radius:4px;font-size:0.82rem;" id="svc-host-badge">127.0.0.1:5757</code>. All endpoints accept <code style="background:var(--surface2);padding:2px 8px;border-radius:4px;font-size:0.82rem;">?url=FACEBOOK_URL</code>.</p>
     <div class="endpoint-grid">
       <div class="endpoint-card">
         <div class="ep-header" onclick="toggleEp('ep1')">
           <span class="ep-method">GET</span><span class="ep-path">/health</span><span class="ep-desc">Health check</span>
         </div>
         <div class="ep-body" id="ep1">
-          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>curl "http://127.0.0.1:5757/health"</div>
+          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>curl "<span class="svc-base">http://127.0.0.1:5757</span>/health"</div>
         </div>
       </div>
       <div class="endpoint-card">
@@ -230,7 +230,7 @@
         </div>
         <div class="ep-body" id="ep2">
           <div class="ep-provider">Provider: fdown.net — headless Chromium. Returns direct fbcdn.net links.</div>
-          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>curl "http://127.0.0.1:5757/scrape?url=https://www.facebook.com/reel/1234567890"</div>
+          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>curl "<span class="svc-base">http://127.0.0.1:5757</span>/scrape?url=https://www.facebook.com/reel/1234567890"</div>
         </div>
       </div>
       <div class="endpoint-card">
@@ -239,7 +239,7 @@
         </div>
         <div class="ep-body" id="ep3">
           <div class="ep-provider">Provider: savefrom.net — stealth Chromium session.</div>
-          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>curl "http://127.0.0.1:5757/scrape-sf?url=https://www.facebook.com/reel/1234567890"</div>
+          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>curl "<span class="svc-base">http://127.0.0.1:5757</span>/scrape-sf?url=https://www.facebook.com/reel/1234567890"</div>
         </div>
       </div>
       <div class="endpoint-card">
@@ -248,7 +248,7 @@
         </div>
         <div class="ep-body" id="ep4">
           <div class="ep-provider">Provider: snapsave.app — pure HTTP + Node.js vm sandbox. No Puppeteer needed.</div>
-          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>curl "http://127.0.0.1:5757/scrape-snap?url=https://www.facebook.com/reel/1234567890"</div>
+          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>curl "<span class="svc-base">http://127.0.0.1:5757</span>/scrape-snap?url=https://www.facebook.com/reel/1234567890"</div>
         </div>
       </div>
     </div>
@@ -412,7 +412,9 @@ npm install puppeteer-core node-fetch
   function toggleEp(id) { document.getElementById(id).classList.toggle('open'); }
 
   function copyCode(btn) {
-    const text = btn.parentElement.textContent.replace(/Copy|Copied!/g, '').trim();
+    const el = btn.parentElement.cloneNode(true);
+    el.querySelectorAll('button').forEach(b => b.remove());
+    const text = el.textContent.replace(/Copy|Copied!/g, '').trim();
     navigator.clipboard.writeText(text).then(() => {
       btn.textContent = 'Copied!'; btn.classList.add('copied');
       setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
@@ -441,6 +443,33 @@ npm install puppeteer-core node-fetch
   }
 
   document.getElementById('fbUrl').addEventListener('keydown', e => { if (e.key === 'Enter') tryFb4(); });
+
+  // Dynamic host detection — show current domain in endpoint examples
+  (function() {
+    const h = window.location.hostname;
+    const isLocal = (h === '127.0.0.1' || h === 'localhost');
+    const proto = window.location.protocol;
+    const port = window.location.port;
+
+    // Build display label (e.g. "fb.xcasper.space" or "127.0.0.1:5757")
+    let displayHost, baseUrl;
+    if (isLocal) {
+      displayHost = '127.0.0.1:' + (port || '5757');
+      baseUrl = 'http://127.0.0.1:' + (port || '5757');
+    } else {
+      displayHost = h + (port ? ':' + port : '');
+      baseUrl = proto + '//' + displayHost;
+    }
+
+    // Update badge in description
+    const badge = document.getElementById('svc-host-badge');
+    if (badge) badge.textContent = displayHost;
+
+    // Update all curl base URL spans
+    document.querySelectorAll('.svc-base').forEach(el => {
+      el.textContent = baseUrl;
+    });
+  })();
 </script>
 </body>
 </html>
