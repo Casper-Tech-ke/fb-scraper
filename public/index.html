@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>fb-scraper — Facebook Video Downloader Service by CASPER TECH</title>
+  <meta name="description" content="Internal Facebook video scraper service powering the CASPER TECH API Hub. Multi-provider: fdown.net, savefrom.net, snapsave.app. No API key required."/>
+  <meta name="author" content="TRABY CASPER · CASPER TECH"/>
+  <meta name="keywords" content="Facebook downloader, Facebook video scraper, fb-scraper, CASPER TECH, free API"/>
+  <meta name="robots" content="index, follow"/>
+
+  <meta property="og:type" content="website"/>
+  <meta property="og:url" content="https://apis.xcasper.space/api/downloader/fb4"/>
+  <meta property="og:title" content="fb-scraper — Facebook Video Downloader by CASPER TECH"/>
+  <meta property="og:description" content="Free Facebook video downloader API. No API key, no sign-up. Multi-provider: fdown.net, savefrom.net, snapsave.app."/>
+  <meta property="og:site_name" content="CASPER TECH"/>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue: #1877f2;
+      --blue-light: #42a5f5;
+      --blue-dark: #1565c0;
+      --blue-glow: #1877f222;
+      --bg: #0a0a0a;
+      --surface: #111;
+      --surface2: #181818;
+      --border: #1f1f1f;
+      --text: #e8e8e8;
+      --muted: #5a5a5a;
+      --radius: 12px;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; line-height: 1.6; }
+
+    /* Header */
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 36px;
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+      position: sticky; top: 0; z-index: 100;
+    }
+    .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+    .logo-icon {
+      width: 38px; height: 38px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--blue), var(--blue-light));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; color: white; font-weight: 900;
+    }
+    .logo-text h1 { font-size: 1.1rem; font-weight: 700; color: #fff; }
+    .logo-text p { font-size: 0.72rem; color: var(--muted); }
+    nav { display: flex; gap: 4px; flex-wrap: wrap; }
+    nav a { color: var(--muted); font-size: 0.8rem; text-decoration: none; padding: 5px 11px; border-radius: 6px; transition: color 0.2s, background 0.2s; }
+    nav a:hover { color: #fff; background: var(--surface2); }
+    .badge { background: linear-gradient(135deg, var(--blue), var(--blue-light)); color: #fff; font-size: 0.68rem; font-weight: 700; padding: 4px 12px; border-radius: 20px; letter-spacing: 0.5px; }
+
+    /* Hero */
+    .hero {
+      text-align: center; padding: 72px 24px 56px;
+      background: radial-gradient(ellipse at 50% 0%, var(--blue-glow) 0%, transparent 70%);
+    }
+    .hero-tag { display: inline-block; background: var(--surface2); border: 1px solid var(--border); color: var(--blue-light); font-size: 0.72rem; font-weight: 600; padding: 5px 14px; border-radius: 20px; margin-bottom: 20px; letter-spacing: 0.5px; }
+    .hero h2 { font-size: clamp(1.8rem, 5vw, 3rem); font-weight: 800; color: #fff; margin-bottom: 16px; line-height: 1.2; }
+    .hero h2 span { background: linear-gradient(135deg, var(--blue), var(--blue-light)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .hero p { font-size: 1rem; color: var(--muted); max-width: 560px; margin: 0 auto 32px; }
+    .hero-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .btn { padding: 11px 24px; border-radius: 8px; font-size: 0.88rem; font-weight: 600; text-decoration: none; cursor: pointer; border: none; transition: opacity 0.2s, transform 0.15s; display: inline-flex; align-items: center; gap: 7px; }
+    .btn:hover { opacity: 0.88; transform: translateY(-1px); }
+    .btn-primary { background: linear-gradient(135deg, var(--blue), var(--blue-light)); color: #fff; }
+    .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+    .btn-outline:hover { border-color: var(--blue-light); color: var(--blue-light); }
+
+    /* Stats */
+    .stats { display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; padding: 32px 24px; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); background: var(--surface); }
+    .stat { text-align: center; }
+    .stat-num { font-size: 1.6rem; font-weight: 800; color: var(--blue-light); }
+    .stat-label { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+
+    /* Main */
+    main { max-width: 900px; margin: 0 auto; padding: 48px 24px 80px; }
+    section { margin-bottom: 56px; }
+    .section-title { font-size: 1.3rem; font-weight: 700; color: #fff; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+    .section-title span { font-size: 1.1rem; }
+
+    /* Endpoint cards */
+    .endpoint-grid { display: flex; flex-direction: column; gap: 12px; }
+    .endpoint-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; transition: border-color 0.2s; }
+    .endpoint-card:hover { border-color: var(--blue); }
+    .ep-header { display: flex; align-items: center; gap: 12px; padding: 16px 20px; cursor: pointer; }
+    .ep-method { font-size: 0.7rem; font-weight: 700; padding: 3px 9px; border-radius: 5px; background: #1565c022; color: var(--blue-light); border: 1px solid var(--blue-dark); }
+    .ep-path { font-family: monospace; font-size: 0.9rem; color: #fff; flex: 1; }
+    .ep-desc { font-size: 0.8rem; color: var(--muted); margin-left: auto; }
+    .ep-body { padding: 0 20px 16px; display: none; }
+    .ep-body.open { display: block; }
+    .ep-provider { font-size: 0.78rem; color: var(--blue-light); margin-bottom: 10px; }
+
+    /* Code blocks */
+    .code-block { position: relative; background: #0d0d0d; border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; font-family: monospace; font-size: 0.82rem; color: #ccc; overflow-x: auto; margin: 8px 0; }
+    .copy-btn { position: absolute; top: 8px; right: 8px; background: var(--surface2); border: 1px solid var(--border); color: var(--muted); font-size: 0.7rem; padding: 3px 10px; border-radius: 5px; cursor: pointer; transition: color 0.2s, border-color 0.2s; }
+    .copy-btn:hover, .copy-btn.copied { color: var(--blue-light); border-color: var(--blue-light); }
+
+    /* Try it */
+    .try-box { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 20px; }
+    .try-box h3 { font-size: 0.9rem; font-weight: 700; color: #fff; margin-bottom: 16px; }
+    .input-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+    .input-row input, .input-row select { flex: 1; min-width: 200px; background: var(--bg); border: 1px solid var(--border); border-radius: 7px; padding: 9px 13px; color: var(--text); font-size: 0.85rem; outline: none; transition: border-color 0.2s; }
+    .input-row input:focus, .input-row select:focus { border-color: var(--blue); }
+    .result-box { display: none; background: #0d0d0d; border: 1px solid var(--border); border-radius: 8px; padding: 14px; font-family: monospace; font-size: 0.78rem; color: #ccc; white-space: pre-wrap; word-break: break-all; max-height: 320px; overflow-y: auto; margin-top: 12px; }
+    .result-box.visible { display: block; }
+    .result-box.error { border-color: #ef4444; color: #f87171; }
+    .loader { display: inline-block; width: 12px; height: 12px; border: 2px solid #ffffff44; border-top-color: #fff; border-radius: 50%; animation: spin 0.6s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Provider table */
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    th { text-align: left; padding: 10px 14px; color: var(--muted); font-size: 0.75rem; font-weight: 600; border-bottom: 1px solid var(--border); text-transform: uppercase; letter-spacing: 0.5px; }
+    td { padding: 12px 14px; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: top; }
+    tr:last-child td { border-bottom: none; }
+    td code { background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; padding: 2px 7px; font-size: 0.8rem; font-family: monospace; }
+    .tag-blue { background: #1877f222; color: var(--blue-light); border: 1px solid var(--blue-dark); font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; }
+    .tag-green { background: #16a34a22; color: #4ade80; border: 1px solid #15803d; font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; }
+
+    /* Footer */
+    footer { background: var(--surface); border-top: 1px solid var(--border); padding: 28px 36px; text-align: center; }
+    footer p { color: var(--muted); font-size: 0.8rem; margin-bottom: 4px; }
+    footer a { color: var(--blue-light); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 600px) {
+      header { padding: 14px 18px; }
+      main { padding: 32px 16px 60px; }
+      .stats { gap: 24px; }
+      .ep-desc { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <a class="logo" href="https://apis.xcasper.space" target="_blank">
+    <div class="logo-icon">fb</div>
+    <div class="logo-text">
+      <h1>fb-scraper</h1>
+      <p>CASPER TECH · Internal Scraper Service</p>
+    </div>
+  </a>
+  <nav>
+    <a href="#endpoints">Endpoints</a>
+    <a href="#tryit">Try It</a>
+    <a href="#hosting">Self-Host</a>
+    <a href="https://github.com/Casper-Tech-ke/fb-scraper" target="_blank">GitHub</a>
+    <a href="https://apis.xcasper.space" target="_blank" class="badge">API Hub</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="hero-tag">CASPER TECH · Open Source</div>
+  <h2>Facebook Video Scraper<br/><span>Multi-Provider. No API Key.</span></h2>
+  <p>Internal Node.js service powering 4 Facebook downloader endpoints on the CASPER TECH API Hub. Three scraping strategies — Puppeteer, vm-decode — zero setup for end users.</p>
+  <div class="hero-btns">
+    <a class="btn btn-primary" href="https://apis.xcasper.space/api/downloader/fb4?url=https://www.facebook.com/reel/1153246306691628" target="_blank">▶ Try Live API</a>
+    <a class="btn btn-outline" href="https://github.com/Casper-Tech-ke/fb-scraper" target="_blank">⭐ Star on GitHub</a>
+    <a class="btn btn-outline" href="https://xcasper.space" target="_blank">🌍 CASPER TECH</a>
+  </div>
+</section>
+
+<div class="stats">
+  <div class="stat"><div class="stat-num">4</div><div class="stat-label">Public Endpoints</div></div>
+  <div class="stat"><div class="stat-num">3</div><div class="stat-label">Scraping Strategies</div></div>
+  <div class="stat"><div class="stat-num">~250ms</div><div class="stat-label">Avg Response (snap)</div></div>
+  <div class="stat"><div class="stat-num">0</div><div class="stat-label">API Keys Needed</div></div>
+</div>
+
+<main>
+
+  <!-- Endpoints -->
+  <section id="endpoints">
+    <div class="section-title"><span>🔌</span> Internal Endpoints</div>
+    <p style="color:var(--muted);font-size:0.85rem;margin-bottom:20px;">The service runs at <code style="background:var(--surface2);padding:2px 8px;border-radius:4px;font-size:0.82rem;">127.0.0.1:5757</code> and is used internally by the Next.js API layer. All endpoints accept <code style="background:var(--surface2);padding:2px 8px;border-radius:4px;font-size:0.82rem;">?url=FACEBOOK_URL</code>.</p>
+
+    <div class="endpoint-grid">
+
+      <div class="endpoint-card">
+        <div class="ep-header" onclick="toggleEp('ep1')">
+          <span class="ep-method">GET</span>
+          <span class="ep-path">/health</span>
+          <span class="ep-desc">Health check</span>
+        </div>
+        <div class="ep-body" id="ep1">
+          <div class="ep-provider">No upstream provider — returns service status.</div>
+          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>curl "http://127.0.0.1:5757/health"</div>
+        </div>
+      </div>
+
+      <div class="endpoint-card">
+        <div class="ep-header" onclick="toggleEp('ep2')">
+          <span class="ep-method">GET</span>
+          <span class="ep-path">/scrape?url=FB_URL</span>
+          <span class="ep-desc">fdown.net · Puppeteer</span>
+        </div>
+        <div class="ep-body" id="ep2">
+          <div class="ep-provider">Provider: fdown.net — headless Chromium. Returns direct fbcdn.net links. HD detected via <code>/m366/</code> in URL.</div>
+          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>curl "http://127.0.0.1:5757/scrape?url=https://www.facebook.com/reel/1234567890"</div>
+        </div>
+      </div>
+
+      <div class="endpoint-card">
+        <div class="ep-header" onclick="toggleEp('ep3')">
+          <span class="ep-method">GET</span>
+          <span class="ep-path">/scrape-sf?url=FB_URL</span>
+          <span class="ep-desc">savefrom.net · Puppeteer</span>
+        </div>
+        <div class="ep-body" id="ep3">
+          <div class="ep-provider">Provider: savefrom.net — stealth Chromium session. Returns quality-labelled download links and thumbnail.</div>
+          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>curl "http://127.0.0.1:5757/scrape-sf?url=https://www.facebook.com/reel/1234567890"</div>
+        </div>
+      </div>
+
+      <div class="endpoint-card">
+        <div class="ep-header" onclick="toggleEp('ep4')">
+          <span class="ep-method">GET</span>
+          <span class="ep-path">/scrape-snap?url=FB_URL</span>
+          <span class="ep-desc">snapsave.app · vm-decode · ~250ms</span>
+        </div>
+        <div class="ep-body" id="ep4">
+          <div class="ep-provider">Provider: snapsave.app — pure HTTP POST + Node.js vm sandbox. No Puppeteer. Returns JWT-proxied rapidcdn.app links (~60min expiry).</div>
+          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>curl "http://127.0.0.1:5757/scrape-snap?url=https://www.facebook.com/reel/1234567890"</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Public API -->
+  <section id="public">
+    <div class="section-title"><span>🌐</span> Public API Endpoints</div>
+    <p style="color:var(--muted);font-size:0.85rem;margin-bottom:20px;">These are the publicly accessible endpoints on the CASPER TECH API Hub that use this scraper internally.</p>
+    <table>
+      <thead>
+        <tr><th>Endpoint</th><th>Method</th><th>Strategy</th><th>Fallback</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>/api/downloader/fb</code></td>
+          <td><span class="tag-blue">GET</span></td>
+          <td>/scrape (fdown.net)</td>
+          <td>xaviabot</td>
+        </tr>
+        <tr>
+          <td><code>/api/downloader/fb2</code></td>
+          <td><span class="tag-blue">GET</span></td>
+          <td>/scrape-sf → /scrape</td>
+          <td>xaviabot</td>
+        </tr>
+        <tr>
+          <td><code>/api/downloader/fb3</code></td>
+          <td><span class="tag-blue">POST</span></td>
+          <td>fget.io direct API → /scrape</td>
+          <td>xaviabot</td>
+        </tr>
+        <tr>
+          <td><code>/api/downloader/fb4</code></td>
+          <td><span class="tag-green">POST</span></td>
+          <td>/scrape-snap (snapsave.app)</td>
+          <td>—</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Try It -->
+  <section id="tryit">
+    <div class="section-title"><span>⚡</span> Try It Live</div>
+    <div class="try-box">
+      <h3>Test the Public fb4 Endpoint (snapsave.app)</h3>
+      <div class="input-row">
+        <input type="text" id="fbUrl" placeholder="https://www.facebook.com/reel/..." value="https://web.facebook.com/reel/1153246306691628"/>
+      </div>
+      <button class="btn btn-primary" id="tryBtn" onclick="tryFb4()">▶ Download</button>
+      <pre class="result-box" id="tryResult"></pre>
+    </div>
+  </section>
+
+  <!-- Response Format -->
+  <section id="response">
+    <div class="section-title"><span>📦</span> Response Format</div>
+    <p style="color:var(--muted);font-size:0.85rem;margin-bottom:14px;">All public endpoints return a branded JSON response:</p>
+    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>{
+  "success": true,
+  "provider": "CASPER TECH",
+  "creator": "TRABY CASPER",
+  "originalUrl": "https://www.facebook.com/reel/...",
+  "videoId": "1234567890",
+  "title": "Facebook Video",
+  "thumbnail": "https://d.rapidcdn.app/thumb?token=...",
+  "downloads": [
+    { "quality": "HD", "resolution": "720p", "type": "video/mp4", "url": "https://d.rapidcdn.app/v2?token=..." }
+  ],
+  "downloadCount": 1,
+  "primaryDownload": "https://d.rapidcdn.app/v2?token=...",
+  "hd": "https://d.rapidcdn.app/v2?token=...",
+  "sd": "",
+  "elapsed": 266
+}</div>
+  </section>
+
+  <!-- Self-Hosting -->
+  <section id="hosting">
+    <div class="section-title"><span>🚀</span> Self-Hosting</div>
+
+    <p style="color:var(--muted);font-size:0.85rem;margin-bottom:16px;">Run your own instance in minutes.</p>
+
+    <p style="color:#fff;font-size:0.88rem;font-weight:600;margin-bottom:8px;">1. Clone & Install</p>
+    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>git clone https://github.com/Casper-Tech-ke/fb-scraper.git
+cd fb-scraper
+npm install puppeteer-core node-fetch</div>
+
+    <p style="color:#fff;font-size:0.88rem;font-weight:600;margin:16px 0 8px;">2. Install Chromium (Ubuntu/Debian)</p>
+    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>apt-get install -y chromium-browser</div>
+
+    <p style="color:#fff;font-size:0.88rem;font-weight:600;margin:16px 0 8px;">3. Start the Service</p>
+    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button># Direct
+node server.js
+
+# With PM2 (recommended for production)
+npm install -g pm2
+pm2 start server.js --name fb-scraper
+pm2 save
+pm2 startup</div>
+
+    <p style="color:#fff;font-size:0.88rem;font-weight:600;margin:16px 0 8px;">4. Test It</p>
+    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>curl "http://127.0.0.1:5757/health"
+curl "http://127.0.0.1:5757/scrape-snap?url=https://www.facebook.com/reel/1234567890"</div>
+  </section>
+
+  <!-- About -->
+  <section id="about">
+    <div class="section-title"><span>👤</span> About</div>
+    <table>
+      <tbody>
+        <tr><td style="color:var(--muted);width:140px;">Name</td><td>TRABY CASPER</td></tr>
+        <tr><td style="color:var(--muted);">Organisation</td><td>CASPER TECH</td></tr>
+        <tr><td style="color:var(--muted);">Country</td><td>Kenya 🇰🇪</td></tr>
+        <tr><td style="color:var(--muted);">Website</td><td><a href="https://xcasper.space" target="_blank" style="color:var(--blue-light);">xcasper.space</a></td></tr>
+        <tr><td style="color:var(--muted);">GitHub</td><td><a href="https://github.com/Casper-Tech-ke" target="_blank" style="color:var(--blue-light);">@Casper-Tech-ke</a></td></tr>
+        <tr><td style="color:var(--muted);">API Hub</td><td><a href="https://apis.xcasper.space" target="_blank" style="color:var(--blue-light);">apis.xcasper.space</a> — 260+ free endpoints</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+</main>
+
+<footer>
+  <p>fb-scraper · <a href="https://github.com/Casper-Tech-ke/fb-scraper" target="_blank">GitHub</a> · <a href="https://github.com/Casper-Tech-ke/fb-scraper/blob/main/DISCLAIMER.md" target="_blank">Disclaimer</a> · <a href="https://github.com/Casper-Tech-ke/fb-scraper/blob/main/LICENSE" target="_blank">MIT License</a></p>
+  <p style="margin-top:6px;">© 2026 <a href="https://xcasper.space" target="_blank">TRABY CASPER</a> · CASPER TECH · Kenya</p>
+</footer>
+
+<script>
+  function toggleEp(id) {
+    const el = document.getElementById(id);
+    el.classList.toggle('open');
+  }
+
+  function copyCode(btn) {
+    const text = btn.parentElement.textContent.replace(/Copy|Copied!/g, '').trim();
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+    });
+  }
+
+  async function tryFb4() {
+    const url = document.getElementById('fbUrl').value.trim();
+    const btn = document.getElementById('tryBtn');
+    const box = document.getElementById('tryResult');
+    if (!url) return;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="loader"></span> Fetching...';
+    box.className = 'result-box visible';
+    box.textContent = 'Loading...';
+    try {
+      const res = await fetch('https://apis.xcasper.space/api/downloader/fb4', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url })
+      });
+      const data = await res.json();
+      box.className = res.ok ? 'result-box visible' : 'result-box visible error';
+      box.textContent = JSON.stringify(data, null, 2);
+    } catch (e) {
+      box.className = 'result-box visible error';
+      box.textContent = 'Request failed: ' + e.message;
+    }
+    btn.disabled = false;
+    btn.textContent = '▶ Download';
+  }
+
+  document.getElementById('fbUrl').addEventListener('keydown', e => {
+    if (e.key === 'Enter') tryFb4();
+  });
+</script>
+
+</body>
+</html>
