@@ -54,30 +54,61 @@ All endpoints accept the Facebook URL via `?url=` query parameter.
 
 ---
 
-## Quick Start
+## Self-Hosting
 
-The service runs internally. To start it:
+### Prerequisites
+
+- Node.js 18 or higher
+- Chromium installed (for Puppeteer endpoints)
+- PM2 (recommended for production)
+
+### Install & Run
 
 ```bash
+# Clone the repo
+git clone https://github.com/Casper-Tech-ke/fb-scraper.git
+cd fb-scraper
+
+# Install puppeteer-core (and node-fetch if not on Node 18+)
+npm install puppeteer-core node-fetch
+
+# Set your Chromium path in server.js (default: /usr/bin/chromium)
+# CHROMIUM = '/usr/bin/chromium'
+
+# Run directly
 node server.js
+
+# Or run with PM2
+pm2 start server.js --name fb-scraper
+pm2 save
 ```
 
-Service listens on `127.0.0.1:5757`.
+The service listens on `127.0.0.1:5757` by default. To change the port, update `PORT` at the top of `server.js`.
 
-### Example Requests
+### Chromium Setup (Ubuntu/Debian)
 
 ```bash
-# fdown.net scraper
+apt-get install -y chromium-browser
+# or
+apt-get install -y chromium
+```
+
+---
+
+## Example Requests
+
+```bash
+# Health check
+curl "http://127.0.0.1:5757/health"
+
+# fdown.net scraper (HD + SD fbcdn.net links)
 curl "http://127.0.0.1:5757/scrape?url=https://www.facebook.com/reel/1234567890"
 
 # savefrom.net scraper
 curl "http://127.0.0.1:5757/scrape-sf?url=https://www.facebook.com/reel/1234567890"
 
-# snapsave.app (fast, no browser)
+# snapsave.app — fast, no browser needed
 curl "http://127.0.0.1:5757/scrape-snap?url=https://www.facebook.com/reel/1234567890"
-
-# Health check
-curl "http://127.0.0.1:5757/health"
 ```
 
 ---
@@ -187,8 +218,14 @@ Puppeteer path: `/tmp/iss-capture/node_modules/puppeteer-core`
 
 ```
 fb-scraper/
-├── server.js       - Main HTTP server (all scraping logic)
-└── server.js.bak   - Backup of base server before snap function was added
+├── server.js         - Main HTTP server (all scraping logic)
+├── server.js.bak     - Backup of base server before snap function was added
+├── public/
+│   └── index.html    - Interactive documentation frontend
+├── CONTRIBUTING.md
+├── DISCLAIMER.md
+├── LICENSE
+└── README.md
 ```
 
 ---
@@ -206,9 +243,17 @@ This service powers the following public endpoints on [apis.xcasper.space](https
 
 ---
 
+## Contributing
+
+Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) before submitting a pull request.
+
+## Disclaimer
+
+This is an independent open-source project not affiliated with or endorsed by Facebook/Meta. Read the full [DISCLAIMER.md](DISCLAIMER.md).
+
 ## License
 
-[MIT](LICENSE) © 2025 TRABY CASPER · CASPER TECH
+[MIT](LICENSE) © 2026 TRABY CASPER · CASPER TECH
 
 ---
 
