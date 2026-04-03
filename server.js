@@ -299,18 +299,30 @@ const server = http.createServer(async (req, res) => {
   res.setHeader('Content-Type', 'application/json');
   res.setHeader('Access-Control-Allow-Origin', '*');
 
-  if (parsed.pathname === '/' && req.method === 'GET') {
+  // Static file server for public/
+  if (req.method === 'GET') {
     const fs = require('fs');
     const path = require('path');
-    const htmlPath = path.join(__dirname, 'public', 'index.html');
-    try {
-      const html = fs.readFileSync(htmlPath, 'utf8');
-      res.setHeader('Content-Type', 'text/html; charset=utf-8');
-      res.end(html);
-    } catch(e) {
-      res.end('<h1>fb-scraper — CASPER TECH</h1><p>Service running on port 5757</p>');
+    const mimeMap = {
+      '.html':'text/html; charset=utf-8',
+      '.svg':'image/svg+xml',
+      '.png':'image/png',
+      '.jpg':'image/jpeg',
+      '.ico':'image/x-icon',
+      '.css':'text/css',
+      '.js':'application/javascript',
+      '.json':'application/json',
+    };
+    let reqPath = parsed.pathname === '/' ? '/index.html' : parsed.pathname;
+    const filePath = path.join(__dirname, 'public', reqPath);
+    const ext = path.extname(filePath);
+    if (mimeMap[ext] && fs.existsSync(filePath)) {
+      const content = fs.readFileSync(filePath);
+      res.setHeader('Content-Type', mimeMap[ext]);
+      res.setHeader('Cache-Control', ext === '.html' ? 'no-cache' : 'public, max-age=86400');
+      res.end(content);
+      return;
     }
-    return;
   }
 
   if (parsed.pathname === '/health') {
