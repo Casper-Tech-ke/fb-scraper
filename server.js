@@ -3,7 +3,7 @@ const http = require('http');
 const url = require('url');
 
 const CHROMIUM = '/usr/bin/chromium';
-const PUPPETEER_PATH = '/tmp/iss-capture/node_modules/puppeteer-core';
+const PUPPETEER_PATH = '/root/myapps/fb-scraper/node_modules/puppeteer-core';
 const PORT = 5757;
 
 let puppeteer;
